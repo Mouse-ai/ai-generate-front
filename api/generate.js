@@ -1,8 +1,6 @@
-// api/generate.js
-const axios = require('axios');
+import axios from 'axios';
 
-module.exports = async (req, res) => {
-  // Разрешаем только POST-запросы
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Метод не разрешён' });
   }
@@ -13,7 +11,6 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Промпт не может быть пустым' });
   }
 
-  // Переменные окружения должны быть заданы в настройках Vercel
   const YANDEX_FOLDER_ID = process.env.YANDEX_FOLDER_ID;
   const YANDEX_API_KEY = process.env.YANDEX_API_KEY;
 
@@ -51,12 +48,10 @@ module.exports = async (req, res) => {
       }
     );
 
-    // Извлекаем текст ответа (структура, которую мы выяснили ранее)
     const generatedText = response.data.result.alternatives[0].message.text;
     res.json({ generatedText });
-
   } catch (error) {
     console.error('YandexGPT API Error:', error.response?.data || error.message);
     res.status(500).json({ error: 'Ошибка генерации контента' });
   }
-};
+}
